@@ -57,8 +57,10 @@ Default stack (adjust based on project needs):
 
 ## File Structure Convention
 
+All generated output **must** be placed inside an `output/` folder at the project root:
+
 ```
-project/
+output/
 ├── index.html
 ├── css/
 │   ├── reset.css
@@ -84,6 +86,7 @@ project/
 
 ## Rules
 
+- **Never read from the `sample-output/` folder** — it exists only as a reference for humans and must not be used as input or copied by the agent
 - **Never use API keys** in client-side code
 - Always validate user input on both client and server side
 - Escape dynamic content to prevent XSS
