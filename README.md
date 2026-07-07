@@ -1,0 +1,1 @@
+# figma-mcp-demo-energy-app
