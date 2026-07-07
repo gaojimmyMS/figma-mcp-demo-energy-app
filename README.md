@@ -70,6 +70,19 @@ The hosted server at `https://mcp.figma.com/mcp` uses **OAuth** — on first use
 
 > If your client requires a token instead of OAuth, create a Figma personal access token (Figma → **Settings → Security → Personal access tokens**) and provide it to your MCP client as an environment variable or secret. **Never commit the token.**
 
+### Connect the server in VS Code
+
+1. **Start the server**
+   - Open [.vscode/mcp.json](.vscode/mcp.json) and click the **Start** CodeLens shown above the `figma` server entry.
+   - Or open the Command Palette (`Ctrl+Shift+P`) → **MCP: List Servers** → select `figma` → **Start Server**.
+2. **Authorize (OAuth)** — on first start, VS Code opens a browser to sign in to Figma and authorize access. Approve it.
+3. **Verify it's connected** — **MCP: List Servers** should show `figma` as **Running**, and the Copilot Chat tools picker (in **Agent** mode) should list the Figma tools (e.g. `get_figma_data`, `download_figma_images`).
+4. **Use it** — switch to the **web-developer** agent and paste a Figma URL prompt.
+
+**Prerequisites if the Start button does nothing:**
+- MCP support is enabled (`chat.mcp.enabled` is `true` — the default in current VS Code).
+- You are signed in to GitHub Copilot with a plan that allows MCP.
+
 ---
 
 ## Running the demo

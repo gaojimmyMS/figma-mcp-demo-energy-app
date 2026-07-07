@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Watt's Up! — Smart Home Configuration</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=DM+Sans:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Phone shell -->
+  <div class="phone" role="application" aria-label="Smart Home Configuration App">
+    <!-- ============ SCREEN 1: DEVICE DISCOVERY ============ -->
+    <section class="screen screen--discovery is-active" id="screen-discovery">
+      <header class="hero">
+        <div class="hero__badge" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+        </div>
+        <h1 class="hero__title">Watt's Up! ⚡</h1>
+        <p class="hero__subtitle">Let's find your smart energy outlets</p>
+      </header>
+
+      <div class="scan">
+        <div class="scan__orb" id="scanOrb">
+          <span class="scan__ring"></span>
+          <span class="scan__ring scan__ring--delayed"></span>
+          <svg class="scan__wifi" id="scanWifi" viewBox="0 0 24 24" width="64" height="64" fill="none" stroke="#4b7a6e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13a10 10 0 0 1 14 0"></path><path d="M8.5 16.5a5 5 0 0 1 7 0"></path><path d="M2 8.82a15 15 0 0 1 20 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+          <span class="scan__done" id="scanDone" hidden>🎉</span>
+        </div>
+      </div>
+
+      <div class="device-list" id="deviceList">
+        <p class="device-list__empty" id="deviceListEmpty">Press scan to discover devices on your network</p>
+      </div>
+
+      <button class="btn btn--primary" id="scanBtn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <span id="scanBtnLabel">Scan for Devices</span>
+      </button>
+
+      <nav class="steps" aria-label="Progress">
+        <span class="steps__dot steps__dot--active"></span>
+        <span class="steps__dot"></span>
+        <span class="steps__dot"></span>
+      </nav>
+    </section>
+
+    <!-- ============ SCREEN 2: OUTLET CONFIG ============ -->
+    <section class="screen screen--config" id="screen-config" hidden>
+      <header class="config-head">
+        <button class="link-back" id="configBack">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Back
+        </button>
+        <h1 class="config-head__title">Name Your Outlets 🏷️</h1>
+        <p class="config-head__subtitle">Give each outlet a friendly name and room</p>
+      </header>
+
+      <div class="tabs" id="deviceTabs"></div>
+
+      <div class="config-body" id="configBody"></div>
+
+      <div class="config-foot">
+        <div class="progress-meta">
+          <span id="progressCount">1 of 4 outlets</span>
+          <span id="progressPct">25% done</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width:25%"></div>
+        </div>
+        <button class="btn btn--primary" id="toDashboard">
+          View Energy Dashboard
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      </div>
+
+      <nav class="steps" aria-label="Progress">
+        <span class="steps__dot steps__dot--active"></span>
+        <span class="steps__dot steps__dot--active"></span>
+        <span class="steps__dot"></span>
+      </nav>
+    </section>
+
+    <!-- ============ SCREEN 3: ENERGY DASHBOARD ============ -->
+    <section class="screen screen--dashboard" id="screen-dashboard" hidden>
+      <header class="config-head">
+        <button class="link-back" id="dashBack">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          Back
+        </button>
+        <h1 class="config-head__title">Energy Insights ⚡</h1>
+        <p class="config-head__subtitle">Live usage across your smart home</p>
+      </header>
+
+      <div class="usage-card">
+        <div class="usage-card__label">Total power right now</div>
+        <div class="usage-card__value"><span id="totalWatts">0</span><span class="usage-card__unit">W</span></div>
+        <div class="usage-card__cost">≈ <span id="totalCost">$0.00</span> / day</div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-card__head">
+          <span class="chart-card__title">Usage by outlet</span>
+          <span class="chart-card__legend">Watts</span>
+        </div>
+        <div class="chart" id="chart"></div>
+      </div>
+
+      <div class="outlet-list" id="outletList"></div>
+
+      <nav class="steps" aria-label="Progress">
+        <span class="steps__dot steps__dot--active"></span>
+        <span class="steps__dot steps__dot--active"></span>
+        <span class="steps__dot steps__dot--active"></span>
+      </nav>
+    </section>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
