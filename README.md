@@ -123,7 +123,8 @@ The hosted server at `https://mcp.figma.com/mcp` uses **OAuth** — on first use
 
 5. Approve the MCP tool calls when prompted and review the generated files.
 
-### Option C — GitHub Copilot app (github.com / desktop)
+### ~~~Option C — GitHub Copilot app (github.com / desktop)~~~
+### UNDER CONSTRUCTION
 
 1. Open **Copilot Chat** and connect this repository.
 2. Add the **Figma MCP server** in your Copilot MCP settings using `https://mcp.figma.com/mcp` (type `http`) and authorize via OAuth.
