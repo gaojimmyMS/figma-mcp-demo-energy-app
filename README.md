@@ -4,6 +4,16 @@ Turn any **Figma design into production-ready web code** using the [Figma MCP se
 
 ---
 
+## 👋 New here? Start by asking the agent
+
+Not sure where to begin? Select the **web-developer** agent and ask:
+
+> **"What can you do?"**
+
+It will introduce its Figma-to-code capabilities and prompt you for a **Figma URL** to get started.
+
+---
+
 ## What this demo does
 
 1. You provide a **Figma URL** for a design.
@@ -209,3 +219,29 @@ Then open `http://localhost:8000` (or the port `serve` reports).
 - **Agent not listed** — make sure the workspace is open at the repo root so `.github/agents/` is discovered.
 - **Empty or partial design data** — verify the `fileKey` and `node-id` in the URL and that your Figma account has access to the file.
 - **Assets missing** — the agent downloads image/icon nodes into `assets/`; approve any file-write tool prompts.
+
+### Figma tools are "disabled" (most common)
+
+**Symptom:** The agent reports errors like `Tool mcp_figma_..._get_design_context is currently disabled by the user, and cannot be called`, even though the `figma` MCP server is running. You may also see `You currently have nothing selected` when passing the page id.
+
+This happens when the Figma MCP server is connected but its individual tools are **toggled off** in the chat's tool picker — a setting separate from the server config in [.vscode/mcp.json](.vscode/mcp.json).
+
+**Fix — turn the tools back on:**
+
+1. In the **Copilot Chat** input box, click the **Tools** icon (🛠️ / wrench).
+2. Find the **figma** MCP server group in the list.
+3. **Check/enable** its tools — especially `get_design_context`, `get_screenshot`, `get_metadata`, and `get_variable_defs`.
+4. Close the picker and re-send your prompt (e.g. "try again").
+
+**Enable tools for the agent (persistent):** The **web-developer** agent whitelists the whole Figma tool group in its front matter — see the `tools` list in [.github/agents/web-developer.md](.github/agents/web-developer.md):
+
+```yaml
+tools: [execute, read, agent, edit, search, web, com.microsoft/azure/search, 'figma/*', azure-mcp/search, todo]
+```
+
+The `'figma/*'` entry grants the agent every Figma tool. If a specific tool is still blocked, it was turned off manually in the tools picker — re-enable it there (steps above).
+
+**Also confirm:**
+
+- The **Figma desktop app** is running with the **Dev Mode MCP Server enabled** (Figma menu → **Preferences → Enable Dev Mode MCP Server**), if you're using the desktop bridge.
+- You pass a **frame/component node id**, not the page root. The page canvas (e.g. `0-1` / `0:1`) has no design context — get metadata first to find a real frame id (e.g. `4:4`), then request its design context.
