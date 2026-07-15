@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Turn Figma designs into production-ready HTML, CSS, and JavaScript with Figma MCP and GitHub Copilot.">
+  <title>Figma MCP Demo | Design to production code</title>
+  <script>
+    (() => {
+      const param = new URLSearchParams(window.location.search).get("scoutTheme");
+      const theme =
+        param || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      document.documentElement.setAttribute("data-theme", theme);
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: light;
+      --cp-bg: #f7f4ef;
+      --cp-bg-elevated: #fcfbf8;
+      --cp-surface: #ffffff;
+      --cp-surface-soft: #f5f5f5;
+      --cp-border: #dedede;
+      --cp-border-strong: #919191;
+      --cp-text: #242424;
+      --cp-text-muted: #5c5c5c;
+      --cp-text-soft: #6f6f6f;
+      --cp-accent: #b11f4b;
+      --cp-accent-hover: #9a1a41;
+      --cp-accent-soft: rgba(177, 31, 75, 0.08);
+      --cp-accent-fg: #ffffff;
+      --cp-success: #16a34a;
+      --cp-danger: #dc2626;
+      --cp-warning: #f59e0b;
+      --cp-link: #0078d4;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.12);
+      --cp-overlay: rgba(255, 255, 255, 0.8);
+      --cp-panel: rgba(255, 255, 255, 0.86);
+      --cp-panel-strong: rgba(255, 255, 255, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.55);
+      --cp-highlight: rgba(177, 31, 75, 0.12);
+    }
+
+    html[data-theme="dark"] {
+      color-scheme: dark;
+      --cp-bg: #3d3b3a;
+      --cp-bg-elevated: #343231;
+      --cp-surface: #292929;
+      --cp-surface-soft: #2e2e2e;
+      --cp-border: #474747;
+      --cp-border-strong: #5f5f5f;
+      --cp-text: #dedede;
+      --cp-text-muted: #919191;
+      --cp-text-soft: #b0b0b0;
+      --cp-accent: #fd8ea1;
+      --cp-accent-hover: #fb7b91;
+      --cp-accent-soft: rgba(253, 142, 161, 0.14);
+      --cp-accent-fg: #1a1a1a;
+      --cp-success: #4ade80;
+      --cp-danger: #f87171;
+      --cp-warning: #fbbf24;
+      --cp-link: #4da6ff;
+      --cp-shadow: 0 18px 48px rgba(0, 0, 0, 0.32);
+      --cp-overlay: rgba(41, 41, 41, 0.88);
+      --cp-panel: rgba(41, 41, 41, 0.72);
+      --cp-panel-strong: rgba(41, 41, 41, 0.96);
+      --cp-sheen: rgba(255, 255, 255, 0.04);
+      --cp-highlight: rgba(253, 142, 161, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--cp-bg);
+      color: var(--cp-text);
+      font-family: "Segoe UI", Aptos, Calibri, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+      letter-spacing: 0;
+    }
+
+    button,
+    input {
+      font: inherit;
+      letter-spacing: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    a {
+      -webkit-tap-highlight-color: var(--cp-highlight);
+    }
+
+    .container {
+      width: min(100% - 48px, 1180px);
+      margin-inline: auto;
+    }
+
+    .site-header {
+      position: sticky;
+      z-index: 20;
+      top: 0;
+      border-bottom: 1px solid var(--cp-border);
+      background: var(--cp-overlay);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav {
+      display: flex;
+      min-height: 72px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 19px;
+      font-weight: 700;
+    }
+
+    .brand-mark {
+      display: grid;
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      place-items: center;
+      border-radius: 8px;
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+    }
+
+    .brand-mark svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .nav-actions,
+    .nav-links,
+    .hero-actions,
+    .button-content {
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-actions {
+      gap: 28px;
+    }
+
+    .nav-links {
+      gap: 28px;
+    }
+
+    .nav-link {
+      color: var(--cp-text-muted);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .nav-link:hover,
+    .footer-link:hover {
+      color: var(--cp-accent);
+    }
+
+    .button {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: 1px solid var(--cp-border);
+      border-radius: 8px;
+      background: var(--cp-surface);
+      color: var(--cp-text);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 0 20px;
+      transition: transform 160ms ease, background 160ms ease, border-color 160ms ease;
+    }
+
+    .button:hover {
+      border-color: var(--cp-border-strong);
+      transform: translateY(-1px);
+    }
+
+    .button:focus-visible,
+    .nav-link:focus-visible,
+    .footer-link:focus-visible,
+    input:focus-visible {
+      outline: 3px solid var(--cp-accent-soft);
+      outline-offset: 2px;
+    }
+
+    .button--primary {
+      border-color: var(--cp-accent);
+      background: var(--cp-accent);
+      color: var(--cp-accent-fg);
+    }
+
+    .button--primary:hover {
+      border-color: var(--cp-accent-hover);
+      background: var(--cp-accent-hover);
+    }
+
+    .button svg {
+      width: 17px;
+      height: 17px;
+      flex: 0 0 17px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(180deg, var(--cp-bg-elevated), var(--cp-bg));
+      padding: 92px 0 64px;
+      text-align: center;
+    }
+
+    .hero::before {
+      position: absolute;
+      width: 720px;
+      height: 320px;
+      border: 1px solid var(--cp-highlight);
+      border-radius: 50%;
+      background: var(--cp-accent-soft);
+      content: "";
+      inset: -230px 50% auto auto;
+      transform: translateX(50%);
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 900px;
+      margin-inline: auto;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--cp-highlight);
+      border-radius: 999px;
+      background: var(--cp-accent-soft);
+      color: var(--cp-accent);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 12px;
+    }
+
+    .eyebrow-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--cp-success);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      max-width: 860px;
+      margin: 24px auto 20px;
+      font-size: 64px;
+      line-height: 1.05;
+    }
+
+    .hero-copy {
+      max-width: 720px;
+      margin: 0 auto;
+      color: var(--cp-text-muted);
+      font-size: 20px;
+    }
+
+    .hero-actions {
+      justify-content: center;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .quickstart-section {
+      position: relative;
+      padding: 8px 0 96px;
+    }
+
+    .quickstart-card {
+      width: min(100%, 640px);
+      margin-inline: auto;
+      border: 1px solid var(--cp-border);
+      border-radius: 16px;
+      background: var(--cp-surface);
+      box-shadow: var(--cp-shadow);
+      padding: 36px;
+    }
+
+    .card-heading {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .card-heading h2 {
+      margin-bottom: 6px;
+      font-size: 25px;
+      line-height: 1.2;
+    }
+
+    .card-heading p,
+    .field-help {
+      margin-bottom: 0;
+      color: var(--cp-text-muted);
+      font-size: 14px;
+    }
+
+    .step-badge {
+      flex: 0 0 auto;
+      border-radius: 999px;
+      background: var(--cp-surface-soft);
+      color: var(--cp-text-muted);
+      font-family: Consolas, "Courier New", Courier, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 10px;
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 10px;
+    }
+
+    input {
+      width: 100%;
+      height: 46px;
+      border: 1px solid var(--cp-border);
+      border-radius: 8px;
+      background: var(--cp-bg-elevated);
+      color: var(--cp-text);
+      padding: 0 14px;
+    }
+
+    input::placeholder {
+      color: var(--cp-text-soft);
+    }
+
+    .field-help {
+      min-height: 21px;
+      margin-top: 10px;
+      text-align: left;
+    }
+
+    .field-help[data-state="success"] {
+      color: var(--cp-success);
+    }
+
+    .field-help[data-state="error"] {
+      color: var(--cp-danger);
+    }
+
+    .prompt-preview {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-top: 24px;
+      border: 1px solid var(--cp-border);
+      border-radius: 10px;
+      background: var(--cp-surface-soft);
+      padding: 16px;
+      text-align: left;
+    }
+
+    .prompt-preview svg {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+      margin-top: 2px;
+      color: var(--cp-accent);
+    }
+
+    .prompt-preview code {
+      color: var(--cp-text-muted);
+      font-family: Consolas, "Courier New", Courier, monospace;
+      font-size: 13px;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+    }
+
+    .workflow {
+      border-top: 1px solid var(--cp-border);
+      background: var(--cp-bg-elevated);
+      padding: 104px 0;
+    }
+
+    .section-heading {
+      width: min(100%, 650px);
+      margin: 0 auto 64px;
+      text-align: center;
+    }
+
+    .section-kicker {
+      margin-bottom: 12px;
+      color: var(--cp-accent);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 14px;
+      font-size: 38px;
+      line-height: 1.15;
+    }
+
+    .section-heading > p:last-child {
+      margin-bottom: 0;
+      color: var(--cp-text-muted);
+      font-size: 17px;
+    }
+
+    .workflow-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 48px;
+    }
+
+    .workflow-step {
+      text-align: center;
+    }
+
+    .step-icon {
+      display: grid;
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 20px;
+      place-items: center;
+      border: 1px solid var(--cp-border);
+      border-radius: 10px;
+      background: var(--cp-surface);
+      color: var(--cp-accent);
+    }
+
+    .step-icon svg {
+      width: 23px;
+      height: 23px;
+    }
+
+    .workflow-step h3 {
+      margin-bottom: 8px;
+      font-size: 18px;
+    }
+
+    .workflow-step p {
+      margin-bottom: 0;
+      color: var(--cp-text-muted);
+      font-size: 15px;
+    }
+
+    .compatibility {
+      border-top: 1px solid var(--cp-border);
+      border-bottom: 1px solid var(--cp-border);
+      background: var(--cp-surface-soft);
+      padding: 36px 0;
+    }
+
+    .compatibility-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 36px;
+    }
+
+    .compatibility-label {
+      margin-bottom: 0;
+      color: var(--cp-text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .compatibility-list {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 36px;
+      color: var(--cp-text-soft);
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .compatibility-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .compatibility-item svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .site-footer {
+      background: var(--cp-bg-elevated);
+      padding: 64px 0 32px;
+    }
+
+    .footer-main {
+      display: flex;
+      justify-content: space-between;
+      gap: 64px;
+      padding-bottom: 56px;
+    }
+
+    .footer-intro {
+      max-width: 390px;
+    }
+
+    .footer-intro p {
+      margin: 18px 0 0;
+      color: var(--cp-text-muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(120px, 1fr));
+      gap: 64px;
+    }
+
+    .footer-column h3 {
+      margin-bottom: 14px;
+      font-size: 14px;
+    }
+
+    .footer-column nav {
+      display: grid;
+      gap: 10px;
+    }
+
+    .footer-link {
+      color: var(--cp-text-muted);
+      font-size: 14px;
+    }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      border-top: 1px solid var(--cp-border);
+      padding-top: 28px;
+      color: var(--cp-text-muted);
+      font-size: 13px;
+    }
+
+    .footer-bottom p {
+      margin-bottom: 0;
+    }
+
+    .github-icon-link {
+      display: grid;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      border: 1px solid var(--cp-border);
+      border-radius: 8px;
+      background: var(--cp-surface);
+    }
+
+    .github-icon-link:hover {
+      border-color: var(--cp-border-strong);
+      color: var(--cp-accent);
+    }
+
+    .github-icon-link svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    @media (max-width: 900px) {
+      h1 {
+        font-size: 50px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .workflow-grid {
+        gap: 28px;
+      }
+
+      .compatibility-inner {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .compatibility-list {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        width: min(100% - 32px, 1180px);
+      }
+
+      .nav {
+        min-height: 64px;
+      }
+
+      .brand {
+        font-size: 16px;
+      }
+
+      .nav-actions > .button {
+        width: 42px;
+        min-height: 42px;
+        padding: 0;
+      }
+
+      .nav-actions > .button span {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+
+      .hero {
+        padding: 72px 0 52px;
+      }
+
+      h1 {
+        font-size: 40px;
+        line-height: 1.08;
+      }
+
+      .hero-copy {
+        font-size: 17px;
+      }
+
+      .hero-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .quickstart-section {
+        padding-bottom: 72px;
+      }
+
+      .quickstart-card {
+        padding: 24px;
+      }
+
+      .card-heading {
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .field-row {
+        grid-template-columns: 1fr;
+      }
+
+      .field-row .button {
+        width: 100%;
+      }
+
+      .workflow {
+        padding: 80px 0;
+      }
+
+      .section-heading {
+        margin-bottom: 48px;
+      }
+
+      .section-heading h2 {
+        font-size: 32px;
+      }
+
+      .workflow-grid {
+        grid-template-columns: 1fr;
+        gap: 44px;
+      }
+
+      .workflow-step {
+        max-width: 420px;
+        margin-inline: auto;
+      }
+
+      .compatibility-list {
+        gap: 20px 28px;
+      }
+
+      .footer-main {
+        flex-direction: column;
+      }
+
+      .footer-links {
+        gap: 32px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .button {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="Figma MCP Demo home">
+        <span class="brand-mark" aria-hidden="true"><i data-lucide="layers-3"></i></span>
+        <span>Figma MCP Demo</span>
+      </a>
+      <div class="nav-actions">
+        <nav class="nav-links" aria-label="Primary navigation">
+          <a class="nav-link" href="#workflow">Workflow</a>
+          <a class="nav-link" href="README.md#prerequisites">Setup</a>
+          <a class="nav-link" href="README.md#troubleshooting">Troubleshooting</a>
+        </nav>
+        <a class="button button--primary" href="https://github.com/gaojimmyMS/figma-mcp-demo" target="_blank" rel="noreferrer">
+          <i data-lucide="github" aria-hidden="true"></i>
+          <span>View repository</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="container hero-content">
+        <div class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Figma MCP + GitHub Copilot</div>
+        <h1 id="hero-title">Turn a Figma frame into production-ready web code.</h1>
+        <p class="hero-copy">A focused demo that gives Copilot the design context, repo conventions, and agent workflow it needs to generate responsive HTML, CSS, and JavaScript.</p>
+        <div class="hero-actions">
+          <a class="button button--primary" href="#quickstart">Create an agent prompt <i data-lucide="arrow-down" aria-hidden="true"></i></a>
+          <a class="button" href="README.md">Read the setup guide <i data-lucide="book-open" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </section>
+
+    <section class="quickstart-section" id="quickstart" aria-labelledby="quickstart-title">
+      <div class="container">
+        <div class="quickstart-card">
+          <div class="card-heading">
+            <div>
+              <h2 id="quickstart-title">Start with your design</h2>
+              <p>Generate a ready-to-paste prompt for the custom web-developer agent.</p>
+            </div>
+            <span class="step-badge">01 / INPUT</span>
+          </div>
+          <label class="field-label" for="figma-url">Figma design URL</label>
+          <div class="field-row">
+            <input id="figma-url" name="figma-url" type="url" inputmode="url" placeholder="https://www.figma.com/design/..." autocomplete="url" aria-describedby="prompt-status">
+            <button class="button button--primary" id="copy-prompt" type="button">
+              <i data-lucide="copy" aria-hidden="true"></i>
+              <span>Copy prompt</span>
+            </button>
+          </div>
+          <p class="field-help" id="prompt-status" aria-live="polite">The prompt asks the agent to inspect the design and adapt it to this repository.</p>
+          <div class="prompt-preview">
+            <i data-lucide="terminal-square" aria-hidden="true"></i>
+            <code>Build this Figma design as a responsive production page. Preserve its visual system, but adapt the content and implementation to this repository.</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="workflow" id="workflow" aria-labelledby="workflow-title">
+      <div class="container">
+        <div class="section-heading">
+          <p class="section-kicker">One connected workflow</p>
+          <h2 id="workflow-title">From design context to code you can ship</h2>
+          <p>The repository packages the MCP connection, a specialized agent, and production-minded implementation guidance.</p>
+        </div>
+        <div class="workflow-grid">
+          <article class="workflow-step">
+            <div class="step-icon" aria-hidden="true"><i data-lucide="scan-search"></i></div>
+            <h3>Read the real design</h3>
+            <p>Figma MCP exposes frame structure, layout, typography, tokens, screenshots, and exportable assets.</p>
+          </article>
+          <article class="workflow-step">
+            <div class="step-icon" aria-hidden="true"><i data-lucide="workflow"></i></div>
+            <h3>Apply repo context</h3>
+            <p>The web-developer agent follows the included skill and existing project conventions instead of copying reference code blindly.</p>
+          </article>
+          <article class="workflow-step">
+            <div class="step-icon" aria-hidden="true"><i data-lucide="file-code-2"></i></div>
+            <h3>Generate a usable site</h3>
+            <p>Receive semantic, responsive, accessible HTML, CSS, JavaScript, and local assets ready for review and deployment.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="compatibility" aria-label="Technology compatibility">
+      <div class="container compatibility-inner">
+        <p class="compatibility-label">Designed to work with</p>
+        <div class="compatibility-list">
+          <span class="compatibility-item"><i data-lucide="figma" aria-hidden="true"></i>Figma MCP</span>
+          <span class="compatibility-item"><i data-lucide="code-2" aria-hidden="true"></i>VS Code</span>
+          <span class="compatibility-item"><i data-lucide="github" aria-hidden="true"></i>GitHub Copilot</span>
+          <span class="compatibility-item"><i data-lucide="braces" aria-hidden="true"></i>HTML / CSS / JS</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-main">
+        <div class="footer-intro">
+          <a class="brand" href="#top">
+            <span class="brand-mark" aria-hidden="true"><i data-lucide="layers-3"></i></span>
+            <span>Figma MCP Demo</span>
+          </a>
+          <p>A practical starter for turning accessible Figma designs into repo-aware, production-ready web experiences with GitHub Copilot.</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-column">
+            <h3>Get started</h3>
+            <nav aria-label="Getting started links">
+              <a class="footer-link" href="README.md#prerequisites">Prerequisites</a>
+              <a class="footer-link" href="README.md#figma-mcp-setup">MCP setup</a>
+              <a class="footer-link" href="README.md#running-the-demo">Run the demo</a>
+            </nav>
+          </div>
+          <div class="footer-column">
+            <h3>Reference</h3>
+            <nav aria-label="Reference links">
+              <a class="footer-link" href="README.md#example-prompts">Example prompts</a>
+              <a class="footer-link" href="README.md#expected-output">Expected output</a>
+              <a class="footer-link" href="README.md#troubleshooting">Troubleshooting</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Open source demo for Figma MCP and GitHub Copilot.</p>
+        <a class="github-icon-link" href="https://github.com/gaojimmyMS/figma-mcp-demo" target="_blank" rel="noreferrer" aria-label="View Figma MCP Demo on GitHub">
+          <i data-lucide="github" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <script>
+    lucide.createIcons();
+
+    const copyButton = document.querySelector("#copy-prompt");
+    const figmaUrlInput = document.querySelector("#figma-url");
+    const promptStatus = document.querySelector("#prompt-status");
+
+    const copyText = async (text) => {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.opacity = "0";
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      textArea.remove();
+    };
+
+    copyButton.addEventListener("click", async () => {
+      const figmaUrl = figmaUrlInput.value.trim();
+
+      if (!figmaUrl || !figmaUrl.startsWith("https://www.figma.com/")) {
+        promptStatus.textContent = "Enter a valid figma.com design URL first.";
+        promptStatus.dataset.state = "error";
+        figmaUrlInput.focus();
+        return;
+      }
+
+      const prompt = `Build this Figma design as a responsive production page: ${figmaUrl}\n\nPreserve its visual system, but adapt the content and implementation to this repository. Use the Figma MCP design context, reuse local conventions, make interactions functional, and verify desktop and mobile layouts.`;
+
+      try {
+        await copyText(prompt);
+        promptStatus.textContent = "Prompt copied. Paste it into Copilot Chat with the web-developer agent selected.";
+        promptStatus.dataset.state = "success";
+        copyButton.querySelector("span").textContent = "Copied";
+        copyButton.querySelector("svg").setAttribute("data-lucide", "check");
+        lucide.createIcons();
+      } catch {
+        promptStatus.textContent = "The browser blocked clipboard access. Select and copy the prompt preview manually.";
+        promptStatus.dataset.state = "error";
+      }
+    });
+  </script>
+</body>
+</html>
